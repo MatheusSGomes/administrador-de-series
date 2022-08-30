@@ -43,19 +43,12 @@ class SeriesController extends Controller
     {
         $serie = $this->repository->add($request);
 
-        
-        foreach(User::all() as $user) {
-            $email = new SeriesCreated(
-                $serie->nome,
-                $serie->id,
-                $request->seasonsQty,
-                $request->episodesPerSeason
-            );
-            $email->subject = 'Nova série criada';
-            
-            Mail::to($user)->queue($email);
-            // sleep(2);
-        }
+        \App\Events\SeriesCreated::dispatch(
+            $serie->nome,
+            $serie->id,
+            $request->seasonsQty,
+            $request->episodesPerSeason
+        );
         
         return to_route('series.index')
             ->with('mensagem.sucesso', "Série '{$serie->nome}' adicionada com sucesso");
