@@ -9,6 +9,7 @@ use App\Repositories\EloquentSeriesRepository;
 use App\Http\Middleware\Autenticador;
 use App\Mail\SeriesCreated;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 use App\Models\{
     Series,
     Season,
@@ -41,6 +42,9 @@ class SeriesController extends Controller
 
     public function store(SeriesFormRequest $request, EloquentSeriesRepository $repository)
     {
+        $coverPath = $request->file('cover')->store('series_cover', 'public');
+        $request->coverPath = $coverPath;
+
         $serie = $this->repository->add($request);
 
         \App\Events\SeriesCreated::dispatch(
@@ -49,7 +53,7 @@ class SeriesController extends Controller
             $request->seasonsQty,
             $request->episodesPerSeason
         );
-        
+
         return to_route('series.index')
             ->with('mensagem.sucesso', "Série '{$serie->nome}' adicionada com sucesso");
     }

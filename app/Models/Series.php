@@ -10,7 +10,7 @@ use App\Models\Season;
 class Series extends Model
 {
     use HasFactory;
-    protected $fillable = ['nome'];
+    protected $fillable = ['nome', 'cover'];
     // protected $with = ['seasons'];
 
     public function seasons()
@@ -21,7 +21,7 @@ class Series extends Model
     public static function booted()
     {
         self::addGlobalScope('ordered', function(Builder $queryBuilder) {
-            $queryBuilder->orderBy('nome', 'asc');
+            $queryBuilder->orderBy('nome');
         });
     }
 }
